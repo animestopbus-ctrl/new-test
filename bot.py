@@ -44,13 +44,12 @@ class Bot(Client):
             api_id=API_ID,
             api_hash=API_HASH,
             bot_token=BOT_TOKEN,
-            plugins=dict(root="."),
             workers=20,
             sleep_threshold=10,
             max_concurrent_transmissions=20,
             ipv6=False,
             in_memory=False
-        )
+        )  # Removed plugins to fix module error
 
     async def start(self):
         await super().start()
@@ -275,3 +274,4 @@ if __name__ == "__main__":
     if keep_alive:
         keep_alive()
     BotInstance.run()
+```
