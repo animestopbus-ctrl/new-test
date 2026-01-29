@@ -26,6 +26,5 @@ def _run():
     )
 
 def keep_alive():
-    t = threading.Thread(target=_run)
-    t.daemon = True
+    t = threading.Thread(target=_run, daemon=True)
     t.start()
