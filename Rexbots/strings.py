@@ -2,7 +2,7 @@
 # Don't Remove Credit
 # Telegram Channel @RexBots_Official
 
-HELP_TXT = """<b>🚀 Welcome to RexBots Save Restricted Bot - Complete Guide</b>
+HELP_TXT = """<b>🚀 Welcome to RexBots Ultimate Save Bot - Complete Guide</b>
 
 <b>👋 How to Use Me</b>
 <blockquote expandable>
@@ -11,101 +11,78 @@ HELP_TXT = """<b>🚀 Welcome to RexBots Save Restricted Bot - Complete Guide</b
 • This allows saving from private/restricted channels.
 
 <b>2. Saving Content</b>
-• Simply <b>send any Telegram post link</b> (public or private).
-• For <b>batch saving</b>: Send a link like <code>https://t.me/channel/100-110</code> (from message ID 100 to 110).
-• The bot will save all files/media in the range.
+• Send any Telegram post link (public or private).
+• For batch: <code>https://t.me/channel/100-110</code>.
+• Use /save for YouTube links too!
+• Bot saves with custom settings applied.
 
 <b>3. Features</b>
-• Custom captions with {filename} & {size} placeholders
+• Custom captions ({filename}, {size})
 • Custom thumbnails
-• Auto-forward to your dump chat
-• Daily token system (10 saves/day for free users)
-• Premium = unlimited everything ♾️
+• Word delete/replace in captions/filenames
+• Auto-forward to dump chat
+• Daily limits (10 for free, unlimited premium)
+• Large file streaming
+• YouTube integration
+• Progress bars
+• Zero-downtime
 </blockquote>
 
 <b>📱 User Commands</b>
 
-<blockquote><b>/start</b> — Restart the bot & view your quota</blockquote>
-<blockquote><b>/help</b> — Show this detailed guide</blockquote>
-<blockquote><b>/settings</b> — Open settings menu (caption, thumbnail, dump chat, stats)</blockquote>
-<blockquote><b>/commands</b> — Quick command list</blockquote>
+<blockquote><b>/start</b> — Home & quota</blockquote>
+<blockquote><b>/help</b> — This guide</blockquote>
+<blockquote><b>/settings</b> — Customize (buttons!)</blockquote>
+<blockquote><b>/commands</b> — Command list</blockquote>
 
-<blockquote><b>/login</b> — Login with session string (for restricted channels)</blockquote>
-<blockquote><b>/logout</b> — Logout current session</blockquote>
-<blockquote><b>/cancel</b> — Cancel ongoing batch save</blockquote>
-
-<blockquote><b>/myplan</b> — View your plan status & quota</blockquote>
-<blockquote><b>/premium</b> — Premium plans & benefits</blockquote>
-
-<blockquote><b>/setchat &lt;chat_id&gt;</b> — Set dump chat (auto-forward saved files)</blockquote>
-<blockquote><b>/setchat clear</b> — Remove dump chat</blockquote>
-
-<blockquote><b>/set_caption &lt;text&gt;</b> — Set custom caption (use {filename} & {size})</blockquote>
-<blockquote><b>/see_caption</b> — Preview current caption</blockquote>
-<blockquote><b>/del_caption</b> — Remove custom caption</blockquote>
-
-<blockquote><b>/set_thumb</b> — Reply to photo to set custom thumbnail</blockquote>
-<blockquote><b>/view_thumb</b> — Preview current thumbnail</blockquote>
-<blockquote><b>/del_thumb</b> — Remove custom thumbnail</blockquote>
-<blockquote><b>/thumb_mode</b> — Check thumbnail status</blockquote>
-
-<b>💡 Tips</b>
-• Free users: 10 saves/day + 5 files per batch
-• Premium users: Unlimited saves & batch size
-• Contact @RexBots_Official for support or premium purchase
-
-<b>Thank you for using RexBots! ❤️</b>
-"""
-
-COMMANDS_TXT = """<b>📜 All Available Commands</b>
-
-<b>👤 Main Commands</b>
-<blockquote>
-/start  — Home & quota
-/help  — Detailed guide
-/settings — Customize bot
-/commands — This list
-
-/login  — Connect account
-/logout — Disconnect account
-/cancel — Stop current task
-</blockquote>
+<blockquote><b>/login</b> — Connect account</blockquote>
+<blockquote><b>/logout</b> — Disconnect</blockquote>
+<blockquote><b>/cancel</b> — Stop batch</blockquote>
+<blockquote><b>/save</b> — Save link (TG/YouTube)</blockquote>
+<blockquote><b>/batch</b> — Batch save</blockquote>
+<blockquote><b>/cmd</b> — Refresh menu</blockquote>
 
 <b>💎 Plan & Quota</b>
 <blockquote>
-/myplan — Your plan status
-/premium — Upgrade options
+/myplan — Plan status
+/premium — Upgrade
 </blockquote>
 
 <b>📤 Dump Chat</b>
 <blockquote>
-/setchat &lt;chat_id&gt; — Set forward destination
-/setchat clear — Remove dump chat
+/setchat <chat_id> — Set destination
+/setchat clear — Remove
 </blockquote>
 
 <b>✍️ Caption</b>
 <blockquote>
-/set_caption &lt;text&gt; — Custom caption
-/see_caption — Preview caption
-/del_caption — Remove caption
+/set_caption <text> — Set
+/see_caption — Preview
+/del_caption — Remove
 </blockquote>
 
 <b>🖼 Thumbnail</b>
 <blockquote>
-/set_thumb — Reply to photo
-/view_thumb — Preview thumbnail
-/del_thumb — Remove thumbnail
-/thumb_mode — Status
+/set_thumb — Reply to photo
+/view_thumb — Preview
+/del_thumb — Remove
+/thumb_mode — Status
 </blockquote>
 
-<b>🔥 Premium = Unlimited Everything</b>
+<b>🔤 Words</b>
+<blockquote>
+/set_del_word words — Delete words
+/rem_del_word words — Remove delete
+/set_repl_word target repl — Replace
+/rem_repl_word target — Remove replace
+</blockquote>
+
+<b>🔥 Premium = Unlimited + Extras 💎</b>
 <i>Contact @RexBots_Official to upgrade!</i>
 """
 
-# Dont remove Credits
-# Developer Telegram @about_zani/143
-# Update channel - @RexBots_Official
+START_TXT = """<b>👋 Hello {0}!</b>\n\nI'm <b>{2}</b> (@{1}), the ultimate bot to save restricted content from Telegram and more.\n\nUse /help for guide or /settings to customize. 🚀"""
 
-# Rexbots
-# Don't Remove Credit
-# Telegram Channel @RexBots_Official
+ABOUT_TXT = """<b>🤖 About Me</b>\n\n<b>Name:</b> RexBots Ultimate Save Bot\n<b>Version:</b> 3.0 (Advanced)\n<b>Developer:</b> @RexBots_Official\n\n<i>Save any restricted media easily with premium features! 💎</i>"""
+
+COMMANDS_TXT = """<b>📜 All Available Commands</b>\n\n<b>👤 Main</b>\n<blockquote>/start — Home\n/help — Guide\n/settings — Customize\n/commands — This list\n/login — Connect\n/logout — Disconnect\n/cancel — Stop task\n/save — Save link\n/batch — Batch save\n/cmd — Refresh menu</blockquote>\n<b>💎 Plan</b>\n<blockquote>/myplan — Status\n/premium — Upgrade</blockquote>\n<b>📤 Dump</b>\n<blockquote>/setchat <id> — Set\n/setchat clear — Remove</blockquote>\n<b>✍️ Caption</b>\n<blockquote>/set_caption <text> — Set\n/see_caption — Preview\n/del_caption — Remove</blockquote>\n<b>🖼 Thumbnail</b>\n<blockquote>/set_thumb — Set\n/view_thumb — Preview\n/del_thumb — Remove\n/thumb_mode — Status</blockquote>\n<b>🔤 Words</b>\n<blockquote>/set_del_word — Delete\n/rem_del_word — Remove delete\n/set_repl_word — Replace\n/rem_repl_word — Remove replace</blockquote>\n<b>🔥 Premium Unlimited! 💎</b>"""
