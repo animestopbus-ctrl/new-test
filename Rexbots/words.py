@@ -3,7 +3,7 @@
 # Telegram Channel @RexBots_Official
 
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from database.db import db
 
 @Client.on_message(filters.command("set_del_word") & filters.private)
@@ -13,7 +13,8 @@ async def set_del_word(client: Client, message: Message):
     
     words = message.command[1:]
     await db.set_delete_words(message.from_user.id, words)
-    await message.reply_text(f"**Added {len(words)} words to delete list.**")
+    buttons = InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="settings_back_btn")]])
+    await message.reply_text(f"**Added {len(words)} words to delete list. ✅**", reply_markup=buttons)
 
 @Client.on_message(filters.command("rem_del_word") & filters.private)
 async def rem_del_word(client: Client, message: Message):
@@ -22,14 +23,11 @@ async def rem_del_word(client: Client, message: Message):
     
     words = message.command[1:]
     await db.remove_delete_words(message.from_user.id, words)
-    await message.reply_text(f"**Removed {len(words)} words from delete list.**")
-# Rexbots
-# Don't Remove Credit
-# Telegram Channel @RexBots_Official
+    buttons = InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="settings_back_btn")]])
+    await message.reply_text(f"**Removed {len(words)} words from delete list. ✅**", reply_markup=buttons)
 
 @Client.on_message(filters.command("set_repl_word") & filters.private)
 async def set_repl_word(client: Client, message: Message):
-    # Syntax: /set_repl_word target replacement
     if len(message.command) < 3:
         return await message.reply_text("**Usage:** `/set_repl_word target replacement`\n\nExample: `/set_repl_word @OldChannel @NewChannel`")
     
@@ -37,7 +35,8 @@ async def set_repl_word(client: Client, message: Message):
     replacement = message.command[2]
     
     await db.set_replace_words(message.from_user.id, {target: replacement})
-    await message.reply_text(f"**Set replacement:** `{target}` -> `{replacement}`")
+    buttons = InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="settings_back_btn")]])
+    await message.reply_text(f"**Set replacement:** `{target}` -> `{replacement}` ✅", reply_markup=buttons)
 
 @Client.on_message(filters.command("rem_repl_word") & filters.private)
 async def rem_repl_word(client: Client, message: Message):
@@ -46,8 +45,5 @@ async def rem_repl_word(client: Client, message: Message):
     
     target = message.command[1]
     await db.remove_replace_words(message.from_user.id, [target])
-    await message.reply_text(f"**Removed replacement for:** `{target}`")
-
-# Rexbots
-# Don't Remove Credit
-# Telegram Channel @RexBots_Official
+    buttons = InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="settings_back_btn")]])
+    await message.reply_text(f"**Removed replacement for:** `{target}` ✅", reply_markup=buttons)
