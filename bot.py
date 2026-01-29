@@ -71,6 +71,14 @@ class Bot(Client):
         except Exception as e:
             logger.error(f"Failed to send to log channel: {e}. Logging to console.")
 
+        # Verify DB connection
+        try:
+            await db.col.command("ping")
+            logger.info("MongoDB connection established.")
+        except Exception as e:
+            logger.error(f"MongoDB connection failed: {e}")
+            sys.exit(1)
+
         commands = [
             BotCommand("start", "Start the bot"),
             BotCommand("help", "Get help"),
