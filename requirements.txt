@@ -4,9 +4,11 @@ TgCrypto
 
 # --- Asynchronous & Networking ---
 aiohttp==3.9.5
+uvloop
 
 # --- Database & Utilities ---
 motor
+pytube  # For YouTube integration
 
 # --- Web Framework (Flask Stack) ---
 Flask==1.1.2
