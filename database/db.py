@@ -17,8 +17,17 @@ class Database:
             id = id,
             name = name,
             session = None,
-            daily_usage = 0,            # Added: Track saves
-            limit_reset_time = None     # Added: Track 24h reset time
+            daily_usage = 0,
+            limit_reset_time = None,
+            total_saves = 0,
+            is_premium = False,
+            premium_expiry = None,
+            delete_words = [],
+            replace_words = {},
+            caption = None,
+            thumbnail = None,
+            dump_chat = None,
+            banned = False
         )
     
     async def add_user(self, id, name):
@@ -48,7 +57,6 @@ class Database:
         user = await self.col.find_one({'id': int(id)})
         return user.get('session')
 
-    # Caption Support
     async def set_caption(self, id, caption):
         await self.col.update_one({'id': int(id)}, {'$set': {'caption': caption}})
 
@@ -59,7 +67,6 @@ class Database:
     async def del_caption(self, id):
         await self.col.update_one({'id': int(id)}, {'$unset': {'caption': ""}})
 
-    # Thumbnail Support
     async def set_thumbnail(self, id, thumbnail):
         await self.col.update_one({'id': int(id)}, {'$set': {'thumbnail': thumbnail}})
 
@@ -70,71 +77,42 @@ class Database:
     async def del_thumbnail(self, id):
         await self.col.update_one({'id': int(id)}, {'$unset': {'thumbnail': ""}})
 
-    # Rexbots / Modified by You
-    # Don't Remove Credit
-    # Telegram Channel @RexBots_Official
-
-    # Premium Support
-    async def add_premium(self, id, expiry_date):
-        # When user buys premium, we also reset their limits just in case
-        await self.col.update_one({'id': int(id)}, {
-            '$set': {
-                'is_premium': True, 
-                'premium_expiry': expiry_date,
-                'daily_usage': 0,
-                'limit_reset_time': None
-            }
-        })
-        logger.info(f"User {id} granted premium until {expiry_date}")
-
-    async def remove_premium(self, id):
-        await self.col.update_one({'id': int(id)}, {'$set': {'is_premium': False, 'premium_expiry': None}})
-        logger.info(f"User {id} removed from premium")
-
-    async def check_premium(self, id):
-        user = await self.col.find_one({'id': int(id)})
-        if user and user.get('is_premium'):
-            return user.get('premium_expiry')
-        return None
-
-    async def get_premium_users(self):
-        return self.col.find({'is_premium': True})
-
-    # Ban Support
-    async def ban_user(self, id):
-        await self.col.update_one({'id': int(id)}, {'$set': {'is_banned': True}})
-        logger.warning(f"User banned: {id}")
-
-    async def unban_user(self, id):
-        await self.col.update_one({'id': int(id)}, {'$set': {'is_banned': False}})
-        logger.info(f"User unbanned: {id}")
-
-    async def is_banned(self, id):
-        user = await self.col.find_one({'id': int(id)})
-        return user.get('is_banned', False)
-
-    # Dump Chat Support
     async def set_dump_chat(self, id, chat_id):
-        await self.col.update_one({'id': int(id)}, {'$set': {'dump_chat': int(chat_id)}})
+        await self.col.update_one({'id': int(id)}, {'$set': {'dump_chat': chat_id}})
 
     async def get_dump_chat(self, id):
         user = await self.col.find_one({'id': int(id)})
         return user.get('dump_chat', None)
 
-    # Delete/Replace Words Support
+    async def del_dump_chat(self, id):
+        await self.col.update_one({'id': int(id)}, {'$unset': {'dump_chat': ""}})
+
+    async def ban_user(self, id):
+        await self.col.update_one({'id': int(id)}, {'$set': {'banned': True}})
+
+    async def unban_user(self, id):
+        await self.col.update_one({'id': int(id)}, {'$set': {'banned': False}})
+
+    async def is_banned(self, id):
+        user = await self.col.find_one({'id': int(id)})
+        return user.get('banned', False)
+
     async def set_delete_words(self, id, words):
-        await self.col.update_one({'id': int(id)}, {'$addToSet': {'delete_words': {'$each': words}}})
+        current_del = await self.get_delete_words(id) or []
+        new_del = list(set(current_del + words))
+        await self.col.update_one({'id': int(id)}, {'$set': {'delete_words': new_del}})
 
     async def get_delete_words(self, id):
         user = await self.col.find_one({'id': int(id)})
         return user.get('delete_words', [])
 
     async def remove_delete_words(self, id, words):
-        await self.col.update_one({'id': int(id)}, {'$pull': {'delete_words': {'$in': words}}})
+        current_del = await self.get_delete_words(id) or []
+        new_del = [w for w in current_del if w not in words]
+        await self.col.update_one({'id': int(id)}, {'$set': {'delete_words': new_del}})
 
     async def set_replace_words(self, id, repl_dict):
-        user = await self.col.find_one({'id': int(id)})
-        current_repl = user.get('replace_words', {})
+        current_repl = await self.get_replace_words(id) or {}
         current_repl.update(repl_dict)
         await self.col.update_one({'id': int(id)}, {'$set': {'replace_words': current_repl}})
 
@@ -142,75 +120,73 @@ class Database:
         user = await self.col.find_one({'id': int(id)})
         return user.get('replace_words', {})
 
-    async def remove_replace_words(self, id, words):
-        user = await self.col.find_one({'id': int(id)})
-        current_repl = user.get('replace_words', {})
-        for w in words:
-            current_repl.pop(w, None)
+    async def remove_replace_words(self, id, targets):
+        current_repl = await self.get_replace_words(id) or {}
+        for target in targets:
+            current_repl.pop(target, None)
         await self.col.update_one({'id': int(id)}, {'$set': {'replace_words': current_repl}})
 
-    # --------------------------------------------------------
-    # NEW FEATURES: Daily Limits (Free User Restriction)
-    # --------------------------------------------------------
-
     async def check_limit(self, id):
-        """
-        Checks if a user has hit their daily limit.
-        Returns: True if BLOCKED (limit reached), False if ALLOWED.
-        """
         user = await self.col.find_one({'id': int(id)})
         if not user:
-            return False # Should be added via add_user, but safe fallback
+            return False
         
-        # 1. Premium Check: Always allowed
         if user.get('is_premium'):
             return False 
 
-        # 2. Check Time Reset
         now = datetime.datetime.now()
         reset_time = user.get('limit_reset_time')
         
-        # If reset time has passed or was never set, reset count to 0
         if reset_time is None or now >= reset_time:
             await self.col.update_one(
                 {'id': int(id)}, 
-                {'$set': {'daily_usage': 0, 'limit_reset_time': None}}
+                {'$set': {'daily_usage': 0, 'limit_reset_time': now + datetime.timedelta(hours=24)}}
             )
-            return False # Allowed (count is 0)
+            return False
 
-        # 3. Check Count
         usage = user.get('daily_usage', 0)
         if usage >= 10:
-            return True # Blocked
+            return True 
         
-        return False # Allowed
+        return False 
 
     async def add_traffic(self, id):
-        """
-        Increments usage count. 
-        If it's the first save of the cycle, sets the 24h timer.
-        """
         user = await self.col.find_one({'id': int(id)})
         
-        # If premium, do nothing or track stats if you want (currently strictly for limit logic)
         if user.get('is_premium'):
+            await self.col.update_one({'id': int(id)}, {'$inc': {'total_saves': 1}})
             return
 
         now = datetime.datetime.now()
         reset_time = user.get('limit_reset_time')
 
-        # Logic: If timer is not running (None), start it for 24 hours from NOW.
-        if reset_time is None:
+        if reset_time is None or now >= reset_time:
             new_reset_time = now + datetime.timedelta(hours=24)
             await self.col.update_one(
                 {'id': int(id)}, 
                 {'$set': {'daily_usage': 1, 'limit_reset_time': new_reset_time}}
             )
         else:
-            # Just increment
             await self.col.update_one(
                 {'id': int(id)}, 
                 {'$inc': {'daily_usage': 1}}
             )
+        
+        await self.col.update_one({'id': int(id)}, {'$inc': {'total_saves': 1}})
+
+    async def add_premium(self, id, expiry):
+        await self.col.update_one({'id': int(id)}, {'$set': {'is_premium': True, 'premium_expiry': expiry}})
+
+    async def remove_premium(self, id):
+        await self.col.update_one({'id': int(id)}, {'$set': {'is_premium': False, 'premium_expiry': None}})
+
+    async def check_premium(self, id):
+        user = await self.col.find_one({'id': int(id)})
+        is_prem = user.get('is_premium', False)
+        expiry = user.get('premium_expiry')
+        if expiry and datetime.datetime.fromisoformat(expiry) < datetime.datetime.now():
+            await self.remove_premium(id)
+            return False
+        return is_prem
 
 db = Database(DB_URI, DB_NAME)
