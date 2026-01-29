@@ -2,8 +2,6 @@
 # Don't Remove Credit
 # Telegram Channel @RexBots_Official
 
-
-
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
 from database.db import db
 from pyrogram import Client, filters
@@ -18,9 +16,6 @@ from logger import LOGGER
 
 logger = LOGGER(__name__)
 
-# ---------------------------------------------------
-# Broadcast helper function
-# ---------------------------------------------------
 async def broadcast_messages(user_id, message):
     try:
         await message.copy(chat_id=user_id)
@@ -41,9 +36,6 @@ async def broadcast_messages(user_id, message):
         logger.error(f"[!] Broadcast error for {user_id}: {e}")
         return False, "Error"
 
-# ---------------------------------------------------
-# /broadcast command
-# ---------------------------------------------------
 @Client.on_message(filters.command("broadcast") & filters.user(ADMINS))
 async def broadcast_command(bot: Client, message: Message):
     b_msg = message.reply_to_message
@@ -55,7 +47,7 @@ async def broadcast_command(bot: Client, message: Message):
 
     users = await db.get_all_users()
     sts = await message.reply_text(
-        text='**__Broadcasting your message...__**',
+        text='**__Broadcasting your message... 📡__**',
         quote=True
     )
 
@@ -81,26 +73,9 @@ async def broadcast_command(bot: Client, message: Message):
                 elif sh == "Error":
                     failed += 1
             done += 1
-# Rexbots
-# Don't Remove Credit
-# Telegram Channel @RexBots_Official
-
             if done % 20 == 0:
                 await sts.edit(
-                    f"**__Broadcast In Progress:__**\n\n"
-                    f"**👥 Total Users:** {total_users}\n"
-                    f"**💫 Completed:** {done} / {total_users}\n"
-                    f"**✅ Success:** {success}\n"
-                    f"**🚫 Blocked:** {blocked}\n"
-                    f"**🚮 Deleted:** {deleted}"
-                )
-        else:
-            done += 1
-            failed += 1
-            if done % 20 == 0:
-                await sts.edit(
-                    f"**__Broadcast In Progress:__**\n\n"
-                    f"**👥 Total Users:** {total_users}\n"
+                    f"**__Broadcast in Progress:__**\n"
                     f"**💫 Completed:** {done} / {total_users}\n"
                     f"**✅ Success:** {success}\n"
                     f"**🚫 Blocked:** {blocked}\n"
@@ -109,7 +84,7 @@ async def broadcast_command(bot: Client, message: Message):
 
     time_taken = datetime.timedelta(seconds=int(time.time() - start_time))
     await sts.edit(
-        f"**__Broadcast Completed:__**\n"
+        f"**__Broadcast Completed: ✅__**\n"
         f"**⏰ Completed in:** {time_taken}\n\n"
         f"**👥 Total Users:** {total_users}\n"
         f"**💫 Completed:** {done} / {total_users}\n"
@@ -118,12 +93,9 @@ async def broadcast_command(bot: Client, message: Message):
         f"**🚮 Deleted:** {deleted}"
     )
 
-# ---------------------------------------------------
-# /users Command (Standalone + JSON export)
-# ---------------------------------------------------
 @Client.on_message(filters.command("users") & filters.user(ADMINS))
 async def users_count(bot: Client, message: Message):
-    msg = await message.reply_text("⏳ <b>__Gathering User Data...__</b>", quote=True)
+    msg = await message.reply_text("⏳ <b>__Gathering User Data... 📊__</b>", quote=True)
     try:
         total = await db.total_users_count()
         await msg.edit_text(
@@ -163,12 +135,3 @@ async def users_count(bot: Client, message: Message):
     except Exception as e:
         await msg.edit_text(f"**__⚠️ Error Fetching User Data:__**\n<code>{e}</code>")
         logger.error(f"[!] /users error: {e}")
-
-
-# Credits
-# Developer Telegram: @RexBots_Official
-# Update channel: @RexBots_Official
-
-# Rexbots
-# Don't Remove Credit
-# Telegram Channel @RexBots_Official
