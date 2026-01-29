@@ -49,7 +49,7 @@ class Bot(Client):
             max_concurrent_transmissions=20,
             ipv6=False,
             in_memory=False
-        )  # Removed plugins to fix module error
+        )
 
     async def start(self):
         await super().start()
@@ -274,4 +274,3 @@ if __name__ == "__main__":
     if keep_alive:
         keep_alive()
     BotInstance.run()
-```
